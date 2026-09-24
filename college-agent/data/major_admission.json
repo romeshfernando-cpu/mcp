@@ -1,0 +1,17 @@
+{
+  "_about": "Admission data by college/discipline. UC discipline data goes in uc_discipline.csv (see data/README.md).",
+  "calpoly_slo": {
+    "year": "2025 (preliminary, newly selected first-years)",
+    "gpa_scale_note": "Cal Poly GPA ranges use Cal Poly's own GPA calculation, which may differ from the UC GPA.",
+    "source_url": "https://www.calpoly.edu/admissions/first-year-student/selection-criteria/student-profile",
+    "verified_on": "2026-09-24",
+    "colleges": {
+      "Agriculture, Food & Environmental Sciences": {"applied": 7038, "selected": 2922, "gpa_low": 3.88, "gpa_high": 4.23},
+      "Architecture & Environmental Design": {"applied": 3859, "selected": 1044, "gpa_low": 3.97, "gpa_high": 4.25},
+      "Business": {"applied": 10800, "selected": 2955, "gpa_low": 4.05, "gpa_high": 4.25},
+      "Engineering": {"applied": 21393, "selected": 5008, "gpa_low": 4.14, "gpa_high": 4.25},
+      "Liberal Arts": {"applied": 12805, "selected": 3960, "gpa_low": 3.96, "gpa_high": 4.25},
+      "Science and Mathematics": {"applied": 15276, "selected": 4624, "gpa_low": 4.11, "gpa_high": 4.25}
+    }
+  }
+}

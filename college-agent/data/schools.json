@@ -1,0 +1,13 @@
+{
+  "_about": "Curated per-school facts not available from College Scorecard. Keyed by IPEDS unitid (verify ids with search_colleges). Add schools only after verifying them.",
+  "110635": {"name": "University of California-Berkeley", "system": "UC", "uc_campus": "Berkeley"},
+  "110644": {"name": "University of California-Davis", "system": "UC", "uc_campus": "Davis"},
+  "110653": {"name": "University of California-Irvine", "system": "UC", "uc_campus": "Irvine"},
+  "110662": {"name": "University of California-Los Angeles", "system": "UC", "uc_campus": "Los Angeles"},
+  "110671": {"name": "University of California-Riverside", "system": "UC", "uc_campus": "Riverside"},
+  "110680": {"name": "University of California-San Diego", "system": "UC", "uc_campus": "San Diego"},
+  "110705": {"name": "University of California-Santa Barbara", "system": "UC", "uc_campus": "Santa Barbara"},
+  "110714": {"name": "University of California-Santa Cruz", "system": "UC", "uc_campus": "Santa Cruz"},
+  "445188": {"name": "University of California-Merced", "system": "UC", "uc_campus": "Merced"},
+  "110422": {"name": "California Polytechnic State University-San Luis Obispo", "system": "CSU", "major_data_key": "calpoly_slo"}
+}

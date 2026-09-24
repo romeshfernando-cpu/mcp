@@ -1,0 +1,15 @@
+{
+  "_about": "Expected labels for classify_fit, written from counselor judgment. Numbers are synthetic scenarios, not real school data. Add a case whenever you disagree with a label, then tune fit.THRESHOLDS until all pass.",
+  "cases": [
+    {"id": "ultra-selective", "evidence": {"name": "A", "overall_admit_rate": 0.09}, "gpa": 4.4, "gpa_verified": true, "expect": "reach"},
+    {"id": "under-25pct-strong-gpa", "evidence": {"name": "A2", "overall_admit_rate": 0.22, "source_applicants": 60, "source_admits": 13, "source_admit_mean_gpa": 4.1}, "gpa": 4.3, "gpa_verified": true, "expect": "reach"},
+    {"id": "hs-admits-well-above", "evidence": {"name": "B", "overall_admit_rate": 0.33, "source_applicants": 100, "source_admits": 40, "source_admit_mean_gpa": 4.3}, "gpa": 4.05, "gpa_verified": true, "expect": "reach"},
+    {"id": "hs-admits-at-level", "evidence": {"name": "C", "overall_admit_rate": 0.33, "source_applicants": 100, "source_admits": 45, "source_admit_mean_gpa": 4.1}, "gpa": 4.12, "gpa_verified": true, "expect": "target"},
+    {"id": "clear-safety", "evidence": {"name": "D", "overall_admit_rate": 0.7, "source_applicants": 50, "source_admits": 40, "source_admit_mean_gpa": 4.0}, "gpa": 4.15, "gpa_verified": true, "expect": "safety"},
+    {"id": "high-rate-no-gpa-ref", "evidence": {"name": "E", "overall_admit_rate": 0.85}, "gpa": 4.0, "gpa_verified": true, "expect": "target"},
+    {"id": "calpoly-cafes-strong", "evidence": {"name": "F", "overall_admit_rate": 0.3, "major_admit_rate": 0.415, "major_gpa_low": 3.88, "major_gpa_high": 4.23}, "gpa": 4.2, "gpa_verified": true, "expect": "target"},
+    {"id": "calpoly-csm-weak", "evidence": {"name": "G", "overall_admit_rate": 0.3, "major_admit_rate": 0.303, "major_gpa_low": 4.11, "major_gpa_high": 4.25}, "gpa": 3.95, "gpa_verified": true, "expect": "reach"},
+    {"id": "test-blind-ignores-low-act", "evidence": {"name": "H", "overall_admit_rate": 0.5, "test_policy": "test_blind", "act_25": 30, "act_75": 34}, "gpa": 4.0, "gpa_verified": true, "act": 22, "expect": "target"},
+    {"id": "no-data", "evidence": {"name": "I"}, "gpa": 4.0, "gpa_verified": true, "expect": "unknown"}
+  ]
+}

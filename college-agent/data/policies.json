@@ -1,0 +1,19 @@
+{
+  "_about": "Admission policies by system, each with a source and verification date.",
+  "UC": {
+    "test_policy": "test_blind",
+    "test_note": "SAT/ACT are not considered for fall 2027 applicants.",
+    "major_affects_admission": false,
+    "major_note": "UC says major choice is generally not a factor in freshman admission, though some campuses and colleges admit directly into individual majors.",
+    "sources": ["https://www.universityofcalifornia.edu/about-uc/information-center/freshman-admission-discipline"],
+    "verified_on": "2026-09-24"
+  },
+  "CSU": {
+    "test_policy": "test_blind",
+    "test_note": "CSU does not use SAT/ACT in admission decisions.",
+    "major_affects_admission": true,
+    "major_note": "Cal Poly SLO admits by college/major; admit rates and GPA ranges differ by college.",
+    "sources": ["https://www.calpoly.edu/admissions/first-year-student/selection-criteria/student-profile"],
+    "verified_on": "2026-09-24"
+  }
+}
