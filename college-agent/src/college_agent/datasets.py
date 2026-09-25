@@ -38,6 +38,37 @@ def _num(v: str | None) -> float | None:
         return None
 
 
+POOL_YEARS = 3  # single-year results from one high school swing a lot; pool recent years
+
+
+def _pool(rows: list[dict], years: int) -> dict | None:
+    """Combine the most recent `years` fall terms that have counts.
+
+    Admit rate = total admits / total applicants. Admit GPA is the mean of each
+    year's admit GPA weighted by that year's admits, using only years that
+    report both. Returns None when no year in the window has counts.
+    """
+    recent = sorted(rows, key=lambda r: int(r["fall_year"]), reverse=True)[:years]
+    counted = [r for r in recent if _int(r["applicants"]) is not None and _int(r["admits"]) is not None]
+    if not counted:
+        return None
+    apps = sum(_int(r["applicants"]) for r in counted)
+    adms = sum(_int(r["admits"]) for r in counted)
+    gpa_rows = [(r, _num(r["admit_mean_gpa"])) for r in counted if _num(r["admit_mean_gpa"]) is not None]
+    gpa_w = sum(_int(r["admits"]) for r, _ in gpa_rows)
+    gpa = round(sum(g * _int(r["admits"]) for r, g in gpa_rows) / gpa_w, 2) if gpa_w else None
+    yrs = sorted(int(r["fall_year"]) for r in counted)
+    return {
+        "fall_years": yrs,
+        "applicants": apps,
+        "admits": adms,
+        "admit_rate": round(adms / apps, 3) if apps else None,
+        "admit_mean_gpa": gpa,
+        "method": f"Sum of admits / sum of applicants over fall {yrs[0]}-{yrs[-1]}; "
+                  "admit GPA weighted by each year's admits.",
+    }
+
+
 class Datasets:
     def __init__(self) -> None:
         self.schools = _json("schools.json")
@@ -88,6 +119,7 @@ class Datasets:
             "enrollees": _int(latest["enrollees"]),
             "admit_mean_gpa": _num(latest["admit_mean_gpa"]),
             "applicant_mean_gpa": _num(latest["applicant_mean_gpa"]),
+            "pooled": _pool(rows, POOL_YEARS),
             "years_available": sorted({int(r["fall_year"]) for r in rows}),
             "gpa_basis": "UC weighted, capped 10th-11th grade GPA",
             "source_url": "https://www.universityofcalifornia.edu/about-us/information-center/admissions-source-school",
