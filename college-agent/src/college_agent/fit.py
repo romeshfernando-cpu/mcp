@@ -29,6 +29,7 @@ class SchoolEvidence:
     test_policy: str = "unknown"  # "test_blind" | "test_optional" | "test_required" | "unknown"
     act_25: float | None = None
     act_75: float | None = None
+    act_scores_year: str | None = None  # "latest", a fallback year, or None; see scorecard.normalize
     # From the student's own high school (UC Information Center), if available
     source_applicants: int | None = None
     source_admits: int | None = None
@@ -50,6 +51,7 @@ class FitResult:
     rate_source: str | None
     reference_gpa: float | None
     reference_gpa_source: str | None
+    act_scores_year: str | None = None
     reasons: list[str] = field(default_factory=list)
     warnings: list[str] = field(default_factory=list)
 
@@ -88,7 +90,7 @@ def classify(
 
     if rate is None:
         return FitResult(ev.name, "unknown", "low", None, None, None, None,
-                         ["No admit-rate data available."], warnings)
+                         reasons=["No admit-rate data available."], warnings=warnings)
 
     # 2. Pick the most specific reference GPA available.
     ref_gpa, ref_source = None, None
@@ -125,17 +127,24 @@ def classify(
     else:
         warnings.append("No comparable GPA reference; label relies on admit rate only.")
 
+    stale_act = ev.act_scores_year not in (None, "latest")
     if ev.test_policy == "test_blind":
         reasons.append("Test scores are not considered here, so ACT was ignored.")
     elif act_composite is not None and ev.act_25 is not None and ev.act_75 is not None:
+        year_note = f", {ev.act_scores_year} data" if stale_act else ""
         if act_composite >= ev.act_75:
             score += 0.5
-            reasons.append(f"ACT {act_composite} is at/above the 75th percentile ({ev.act_75}).")
+            reasons.append(f"ACT {act_composite} is at/above the 75th percentile ({ev.act_75}{year_note}).")
         elif act_composite < ev.act_25:
             score -= 0.5
-            reasons.append(f"ACT {act_composite} is below the 25th percentile ({ev.act_25}).")
+            reasons.append(f"ACT {act_composite} is below the 25th percentile ({ev.act_25}{year_note}).")
         else:
-            reasons.append(f"ACT {act_composite} is within the middle 50% ({ev.act_25}-{ev.act_75}).")
+            reasons.append(f"ACT {act_composite} is within the middle 50% ({ev.act_25}-{ev.act_75}{year_note}).")
+        if stale_act:
+            warnings.append(
+                f"ACT range is from {ev.act_scores_year}, the last year this school broadly reported "
+                "scores -- it may be test-optional now, so this range may not reflect current admissions."
+            )
 
     # 4. Label with guardrails.
     if rate < t["always_reach_below_rate"]:
@@ -161,4 +170,5 @@ def classify(
         confidence = "low"
 
     return FitResult(ev.name, label, confidence, round(rate, 4), rate_source,
-                     ref_gpa, ref_source, reasons, warnings)
+                     ref_gpa, ref_source, act_scores_year=ev.act_scores_year,
+                     reasons=reasons, warnings=warnings)
