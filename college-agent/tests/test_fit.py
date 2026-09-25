@@ -51,3 +51,20 @@ def test_unverified_gpa_lowers_confidence_and_warns():
 
 def test_no_data_is_unknown_not_guessed():
     assert classify(SchoolEvidence("?"), 4.0, True).label == "unknown"
+
+
+def test_stale_act_year_is_flagged_in_reasons_and_warnings():
+    ev = SchoolEvidence("P", overall_admit_rate=0.5, test_policy="test_optional",
+                        act_25=30, act_75=35, act_scores_year="2020")
+    r = classify(ev, None, True, act_composite=24)
+    assert r.act_scores_year == "2020"
+    assert any("2020 data" in s for s in r.reasons)
+    assert any("2020" in w and "test-optional" in w for w in r.warnings)
+
+
+def test_latest_act_year_is_not_flagged():
+    ev = SchoolEvidence("P", overall_admit_rate=0.5, test_policy="test_optional",
+                        act_25=30, act_75=35, act_scores_year="latest")
+    r = classify(ev, None, True, act_composite=24)
+    assert not any("data)" in s for s in r.reasons)
+    assert not any("test-optional" in w for w in r.warnings)

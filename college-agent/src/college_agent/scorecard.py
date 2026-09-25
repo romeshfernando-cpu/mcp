@@ -35,12 +35,37 @@ FIELDS = {
     "latest.earnings.10_yrs_after_entry.median": "median_earnings_10yr",
 }
 
+# Most schools went test-optional after 2020 and stopped submitting ACT/SAT
+# data, so "latest" is null for nearly all of them (verified live: 0/40 CA
+# public schools had latest-year ACT data as of Sept 2026). Fall back to the
+# last cohort years with broad reporting; act_scores_year on the result says
+# which year the number actually came from ("latest", "2020", "2019", or None
+# if no year had data for that school).
+ACT_SUFFIXES = {
+    "act_25": "admissions.act_scores.25th_percentile.cumulative",
+    "act_75": "admissions.act_scores.75th_percentile.cumulative",
+}
+ACT_FALLBACK_YEARS = ("2020", "2019")
+ACT_FALLBACK_FIELDS = [f"{year}.{suffix}" for year in ACT_FALLBACK_YEARS for suffix in ACT_SUFFIXES.values()]
+
+REQUEST_FIELDS = list(FIELDS) + ACT_FALLBACK_FIELDS
+
 
 def normalize(raw: dict[str, Any]) -> dict[str, Any]:
     out = {short: raw.get(api) for api, short in FIELDS.items()}
     out["ownership"] = OWNERSHIP_NAME.get(out["ownership"], "unknown")
     pub, priv = out.pop("avg_net_price_public"), out.pop("avg_net_price_private")
     out["avg_net_price"] = pub if out["ownership"] == "public" else priv
+
+    out["act_scores_year"] = "latest" if out["act_25"] is not None or out["act_75"] is not None else None
+    if out["act_scores_year"] is None:
+        for year in ACT_FALLBACK_YEARS:
+            a25 = raw.get(f"{year}.{ACT_SUFFIXES['act_25']}")
+            a75 = raw.get(f"{year}.{ACT_SUFFIXES['act_75']}")
+            if a25 is not None or a75 is not None:
+                out["act_25"], out["act_75"], out["act_scores_year"] = a25, a75, year
+                break
+
     out["source"] = "U.S. Dept. of Education College Scorecard (most recent year available)"
     return out
 
@@ -54,7 +79,7 @@ class ScorecardClient:
     async def _get(self, params: dict[str, Any]) -> list[dict]:
         if not self.api_key:
             raise RuntimeError("SCORECARD_API_KEY is not set (free key: https://api.data.gov/signup).")
-        params = {**params, "api_key": self.api_key, "fields": ",".join(FIELDS)}
+        params = {**params, "api_key": self.api_key, "fields": ",".join(REQUEST_FIELDS)}
         resp = await self.http.get(BASE_URL, params=params)
         resp.raise_for_status()
         results = [normalize(r) for r in resp.json().get("results", [])]

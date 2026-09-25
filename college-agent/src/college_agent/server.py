@@ -94,10 +94,12 @@ def build_server(scorecard: ScorecardClient | None = None,
         """Find four-year colleges from the U.S. Dept. of Education College Scorecard.
 
         ownership: "public", "private_nonprofit", or "any". Admit rates are
-        fractions (0.3 = 30%). Returns admit rate, ACT middle 50%, cost of
-        attendance, average net price, 6-year graduation rate, median earnings,
-        plus each school's test policy and whether major choice affects
-        admission (when known). Use unitid values with the other tools.
+        fractions (0.3 = 30%). Returns admit rate, ACT middle 50% (act_scores_year
+        says which cohort year it's from -- "latest", a fallback year, or null if
+        the school has never reported), cost of attendance, average net price,
+        6-year graduation rate, median earnings, plus each school's test policy
+        and whether major choice affects admission (when known). Use unitid
+        values with the other tools.
         """
         results = await sc.search(state=state, ownership=ownership, zip_code=zip_code,
                                   distance_mi=distance_mi, min_admit_rate=min_admit_rate,
@@ -133,8 +135,11 @@ def build_server(scorecard: ScorecardClient | None = None,
         Uses the most specific evidence available per school: her high
         school's admit rate and admitted GPA, then college/major data, then the
         overall admit rate. Ignores test scores where the school is test-blind.
-        Every label includes the evidence, confidence, and warnings; explain
-        these to the parent rather than restating the label alone.
+        act_scores_year flags when the ACT range used isn't from the latest
+        cohort (a warning is added too) -- likely because the school went
+        test-optional and stopped reporting. Every label includes the evidence,
+        confidence, and warnings; explain these to the parent rather than
+        restating the label alone.
         """
         p = profiles.get(profile_id)
         if not p:
@@ -151,6 +156,7 @@ def build_server(scorecard: ScorecardClient | None = None,
                 overall_admit_rate=rec.get("admit_rate"),
                 test_policy=policy.get("test_policy", "unknown"),
                 act_25=rec.get("act_25"), act_75=rec.get("act_75"),
+                act_scores_year=rec.get("act_scores_year"),
             )
             src = ds.source_school(u, p["high_school"])
             if src.get("status") == "ok":
