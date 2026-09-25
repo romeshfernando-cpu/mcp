@@ -10,7 +10,7 @@ never invents values; missing data is reported as missing.
 | `policies.json` | Test policy and whether major affects admission, per system | Verified 2026-09-24 |
 | `deadlines.json` | Fall 2027 deadlines (UC, Cal Poly SLO) | Verified 2026-09-24 |
 | `major_admission.json` | Cal Poly 2025 admits by college | Verified 2026-09-24 |
-| `source_school.csv` | UC applicants/admits/GPA by high school | Mean GPAs loaded for Santa Margarita Catholic HS, fall 1994-2025 (export 2026-09-25). **Counts still empty: load the count view** |
+| `source_school.csv` | UC applicants/admits/GPA by high school | Santa Margarita Catholic HS, fall 1994-2025: counts and mean GPAs (exports 2026-09-25) |
 | `uc_discipline.csv` | UC admits by broad discipline | **Empty template: fill before demo** |
 
 ## Filling `source_school.csv` (the key demo data)

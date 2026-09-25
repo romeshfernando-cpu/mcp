@@ -8,7 +8,7 @@ datasets.py expects. Values the source leaves blank stay blank; nothing is
 estimated.
 
 Usage:
-    python scripts/convert_uc_export.py --gpa FR_GPA_by_Inst.csv [--counts FR_counts.csv]
+    python scripts/convert_uc_export.py --gpa FR_GPA_by_Inst.csv [--counts HS_by_Year.csv]
 """
 from __future__ import annotations
 
@@ -42,8 +42,13 @@ def clean(v: str | None) -> str:
     return (v or "").strip().replace(",", "")
 
 
+def fall_term(r: dict) -> str:
+    # UC exports spell this "Fall term" or "Fall Term" depending on the view.
+    return next(v for k, v in r.items() if k.strip().lower() == "fall term").strip()
+
+
 def key(r: dict) -> tuple[str, str, str]:
-    return (r["School"].strip(), r["Fall term"].strip(), r["Campus"].strip())
+    return (r["School"].strip(), fall_term(r), r["Campus"].strip())
 
 
 def main() -> None:
@@ -73,8 +78,18 @@ def main() -> None:
     if args.counts:
         data = read_export(args.counts)
         headers = data[0].keys() if data else []
+        if "Count" in headers and "All" in headers:
+            # Long format ("HS by Year" view): one row per measure, with
+            # Count = App/Adm/Enr and the total in "All".
+            long_map = {"App": "applicants", "Adm": "admits", "Enr": "enrollees"}
+            for r in data:
+                dst = long_map.get(r["Count"].strip())
+                if dst:
+                    base(r)[dst] = clean(r.get("All")).removesuffix(".0")
+            data, headers = [], []
+
         mapping = {}
-        for dst, options in COUNT_COLS.items():
+        for dst, options in (COUNT_COLS.items() if headers else []):
             match = next((h for h in headers if h.strip() in options), None)
             if not match:
                 raise SystemExit(f"Counts export has no column for {dst}; headers: {list(headers)}")
