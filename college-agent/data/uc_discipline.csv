@@ -1,1 +1,61 @@
 campus,fall_year,discipline,applicants,admits,admit_gpa_25,admit_gpa_75
+Berkeley,2025,Architecture,2865,222,4.14,4.30
+Berkeley,2025,Arts & Humanities,8925,2256,4.06,4.27
+Berkeley,2025,Business,7102,323,4.20,4.30
+Berkeley,2025,Computer Science,9750,629,4.20,4.29
+Berkeley,2025,Engineering,25025,1788,4.20,4.30
+Berkeley,2025,Life Sciences,19316,3114,4.16,4.29
+Berkeley,2025,Other/Interdisciplinary,6498,835,4.16,4.29
+Berkeley,2025,Physical Sciences/Math,12109,1993,4.18,4.29
+Berkeley,2025,Public Admin,278,39,4.08,4.26
+Berkeley,2025,Public Health,3415,74,4.16,4.29
+Berkeley,2025,Social Sciences,20627,1758,4.15,4.29
+Berkeley,2025,Undeclared,10920,1329,4.11,4.28
+Davis,2025,Architecture,526,130,4.03,4.25
+Davis,2025,Arts & Humanities,6530,3437,3.94,4.24
+Davis,2025,Business,9308,2426,4.00,4.25
+Davis,2025,Computer Science,4893,946,4.20,4.30
+Davis,2025,Education,354,185,3.79,4.21
+Davis,2025,Engineering,17866,6935,4.08,4.28
+Davis,2025,Life Sciences,25418,12732,4.03,4.27
+Davis,2025,Other Health Science,533,309,4.05,4.25
+Davis,2025,Other/Interdisciplinary,5808,2871,4.00,4.25
+Davis,2025,Physical Sciences/Math,6245,3758,4.00,4.26
+Davis,2025,Public Admin,118,90,3.83,4.21
+Davis,2025,Social Sciences,18584,8775,4.00,4.24
+Davis,2025,Undeclared,6805,3079,3.96,4.21
+Los Angeles,2025,Arts & Humanities,14569,1295,4.04,4.28
+Los Angeles,2025,Business,13196,1146,4.19,4.30
+Los Angeles,2025,Computer Science,6803,498,4.25,4.30
+Los Angeles,2025,Education,1244,98,4.13,4.28
+Los Angeles,2025,Engineering,23911,1591,4.25,4.32
+Los Angeles,2025,Life Sciences,23700,3121,4.21,4.30
+Los Angeles,2025,Nursing,5668,31,4.23,4.31
+Los Angeles,2025,Other Health Science,2886,303,4.20,4.30
+Los Angeles,2025,Other/Interdisciplinary,4579,613,4.21,4.30
+Los Angeles,2025,Physical Sciences/Math,12894,1895,4.22,4.30
+Los Angeles,2025,Public Admin,876,127,4.20,4.29
+Los Angeles,2025,Social Sciences,24248,2220,4.19,4.30
+Los Angeles,2025,Undeclared,10486,721,4.16,4.30
+San Diego,2025,Architecture,495,153,4.00,4.25
+San Diego,2025,Arts & Humanities,7812,2699,4.06,4.26
+San Diego,2025,Business,9040,1937,4.13,4.29
+San Diego,2025,Computer Science,10785,2143,4.16,4.30
+San Diego,2025,Education,1100,336,4.08,4.25
+San Diego,2025,Engineering,20205,3938,4.17,4.30
+San Diego,2025,Life Sciences,25093,8177,4.15,4.29
+San Diego,2025,Other Health Science,2939,815,4.09,4.26
+San Diego,2025,Other/Interdisciplinary,10626,3246,4.09,4.28
+San Diego,2025,Physical Sciences/Math,12511,4924,4.13,4.29
+San Diego,2025,Public Health,1760,305,4.08,4.26
+San Diego,2025,Social Sciences,24878,6501,4.08,4.28
+San Diego,2025,Undeclared,9433,3281,4.06,4.27
+Santa Barbara,2025,Arts & Humanities,10271,3619,4.03,4.26
+Santa Barbara,2025,Business,383,162,4.11,4.29
+Santa Barbara,2025,Computer Science,5865,1989,4.19,4.29
+Santa Barbara,2025,Engineering,12679,2694,4.21,4.30
+Santa Barbara,2025,Life Sciences,21225,8909,4.11,4.29
+Santa Barbara,2025,Other/Interdisciplinary,5201,1553,4.04,4.27
+Santa Barbara,2025,Physical Sciences/Math,13760,7558,4.11,4.28
+Santa Barbara,2025,Social Sciences,33738,12720,4.07,4.28
+Santa Barbara,2025,Undeclared,7051,2890,4.00,4.26
