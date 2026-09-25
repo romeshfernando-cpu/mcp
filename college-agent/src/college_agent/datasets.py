@@ -26,6 +26,11 @@ def _csv(name: str) -> list[dict]:
         return list(csv.DictReader(f))
 
 
+def _int(v: str | None) -> int | None:
+    n = _num(v)
+    return int(n) if n is not None else None
+
+
 def _num(v: str | None) -> float | None:
     try:
         return float(v) if v not in (None, "") else None
@@ -76,9 +81,11 @@ class Datasets:
             "campus": campus,
             "fall_year": int(latest["fall_year"]),
             "high_school": latest["high_school"],
-            "applicants": int(_num(latest["applicants"]) or 0),
-            "admits": int(_num(latest["admits"]) or 0),
-            "enrollees": int(_num(latest["enrollees"]) or 0),
+            # Blank at the source means unknown, not zero: keep it None so
+            # classify_fit never treats a missing count as real evidence.
+            "applicants": _int(latest["applicants"]),
+            "admits": _int(latest["admits"]),
+            "enrollees": _int(latest["enrollees"]),
             "admit_mean_gpa": _num(latest["admit_mean_gpa"]),
             "applicant_mean_gpa": _num(latest["applicant_mean_gpa"]),
             "years_available": sorted({int(r["fall_year"]) for r in rows}),
