@@ -108,10 +108,12 @@ def build_server(scorecard: ScorecardClient | None = None,
     def get_source_school_history(unitid: int, high_school: str) -> dict:
         """How applicants from the student's own high school fared at a UC campus.
 
-        Returns applicants, admits, and mean admitted GPA for the most recent
-        year from the UC Information Center. This is usually the most
-        personalized signal available. Small counts are suppressed at the
-        source; report 'insufficient data' rather than guessing.
+        Returns the most recent year's applicants, admits, and mean admitted
+        GPA, plus `pooled`: the same measures combined over the last 3 years,
+        which is steadier because one school's results swing year to year.
+        classify_fit uses the pooled figure. Report both when explaining, and
+        cite the years. Small counts are suppressed at the source; report
+        'insufficient data' rather than guessing.
         """
         return ds.source_school(unitid, high_school)
 
@@ -154,8 +156,15 @@ def build_server(scorecard: ScorecardClient | None = None,
             )
             src = ds.source_school(u, p["high_school"])
             if src.get("status") == "ok":
-                ev.source_applicants, ev.source_admits = src["applicants"], src["admits"]
-                ev.source_admit_mean_gpa = src["admit_mean_gpa"]
+                pooled = src.get("pooled")
+                if pooled:  # prefer the multi-year figure; single years are noisy
+                    ev.source_applicants, ev.source_admits = pooled["applicants"], pooled["admits"]
+                    ev.source_admit_mean_gpa = pooled["admit_mean_gpa"]
+                    ys = pooled["fall_years"]
+                    ev.source_period = f"fall {ys[0]}-{ys[-1]}" if len(ys) > 1 else f"fall {ys[0]}"
+                else:
+                    ev.source_applicants, ev.source_admits = src["applicants"], src["admits"]
+                    ev.source_admit_mean_gpa = src["admit_mean_gpa"]
             major = ds.major_data(u, intended_discipline)
             if major.get("status") == "ok" and major.get("matched_college"):
                 c = major["colleges"][major["matched_college"]]

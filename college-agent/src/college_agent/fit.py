@@ -33,6 +33,7 @@ class SchoolEvidence:
     source_applicants: int | None = None
     source_admits: int | None = None
     source_admit_mean_gpa: float | None = None
+    source_period: str | None = None  # e.g. "fall 2023-2025"
     # From major/college-level data (e.g. Cal Poly by college), if available
     major_gpa_low: float | None = None
     major_gpa_high: float | None = None
@@ -76,7 +77,8 @@ def classify(
     rate, rate_source = None, None
     if _usable_source_data(ev):
         rate = ev.source_admits / ev.source_applicants
-        rate_source = f"student's high school ({ev.source_admits}/{ev.source_applicants} admitted)"
+        period = f", {ev.source_period}" if ev.source_period else ""
+        rate_source = f"student's high school ({ev.source_admits}/{ev.source_applicants} admitted{period})"
     elif ev.major_admit_rate is not None:
         rate, rate_source = ev.major_admit_rate, "admit rate for the intended college/major"
     elif ev.overall_admit_rate is not None:

@@ -26,11 +26,47 @@ def _csv(name: str) -> list[dict]:
         return list(csv.DictReader(f))
 
 
+def _int(v: str | None) -> int | None:
+    n = _num(v)
+    return int(n) if n is not None else None
+
+
 def _num(v: str | None) -> float | None:
     try:
         return float(v) if v not in (None, "") else None
     except ValueError:
         return None
+
+
+POOL_YEARS = 3  # single-year results from one high school swing a lot; pool recent years
+
+
+def _pool(rows: list[dict], years: int) -> dict | None:
+    """Combine the most recent `years` fall terms that have counts.
+
+    Admit rate = total admits / total applicants. Admit GPA is the mean of each
+    year's admit GPA weighted by that year's admits, using only years that
+    report both. Returns None when no year in the window has counts.
+    """
+    recent = sorted(rows, key=lambda r: int(r["fall_year"]), reverse=True)[:years]
+    counted = [r for r in recent if _int(r["applicants"]) is not None and _int(r["admits"]) is not None]
+    if not counted:
+        return None
+    apps = sum(_int(r["applicants"]) for r in counted)
+    adms = sum(_int(r["admits"]) for r in counted)
+    gpa_rows = [(r, _num(r["admit_mean_gpa"])) for r in counted if _num(r["admit_mean_gpa"]) is not None]
+    gpa_w = sum(_int(r["admits"]) for r, _ in gpa_rows)
+    gpa = round(sum(g * _int(r["admits"]) for r, g in gpa_rows) / gpa_w, 2) if gpa_w else None
+    yrs = sorted(int(r["fall_year"]) for r in counted)
+    return {
+        "fall_years": yrs,
+        "applicants": apps,
+        "admits": adms,
+        "admit_rate": round(adms / apps, 3) if apps else None,
+        "admit_mean_gpa": gpa,
+        "method": f"Sum of admits / sum of applicants over fall {yrs[0]}-{yrs[-1]}; "
+                  "admit GPA weighted by each year's admits.",
+    }
 
 
 class Datasets:
@@ -76,11 +112,14 @@ class Datasets:
             "campus": campus,
             "fall_year": int(latest["fall_year"]),
             "high_school": latest["high_school"],
-            "applicants": int(_num(latest["applicants"]) or 0),
-            "admits": int(_num(latest["admits"]) or 0),
-            "enrollees": int(_num(latest["enrollees"]) or 0),
+            # Blank at the source means unknown, not zero: keep it None so
+            # classify_fit never treats a missing count as real evidence.
+            "applicants": _int(latest["applicants"]),
+            "admits": _int(latest["admits"]),
+            "enrollees": _int(latest["enrollees"]),
             "admit_mean_gpa": _num(latest["admit_mean_gpa"]),
             "applicant_mean_gpa": _num(latest["applicant_mean_gpa"]),
+            "pooled": _pool(rows, POOL_YEARS),
             "years_available": sorted({int(r["fall_year"]) for r in rows}),
             "gpa_basis": "UC weighted, capped 10th-11th grade GPA",
             "source_url": "https://www.universityofcalifornia.edu/about-us/information-center/admissions-source-school",
@@ -112,9 +151,11 @@ class Datasets:
             year = max(int(r["fall_year"]) for r in rows)
             disciplines = {
                 r["discipline"]: {
-                    "applicants": int(_num(r["applicants"]) or 0),
-                    "admits": int(_num(r["admits"]) or 0),
-                    "admit_rate": round((_num(r["admits"]) or 0) / (_num(r["applicants"]) or 1), 3),
+                    "applicants": _int(r["applicants"]),
+                    "admits": _int(r["admits"]),
+                    # Unknown, not zero, when either count is blank at the source.
+                    "admit_rate": (round(_int(r["admits"]) / _int(r["applicants"]), 3)
+                                   if _int(r["admits"]) is not None and _int(r["applicants"]) else None),
                     "admit_gpa_25": _num(r["admit_gpa_25"]),
                     "admit_gpa_75": _num(r["admit_gpa_75"]),
                 } for r in rows if int(r["fall_year"]) == year
