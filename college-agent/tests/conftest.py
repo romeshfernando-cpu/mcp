@@ -33,6 +33,8 @@ def data_dir(tmp_path, monkeypatch):
     d = tmp_path / "data"
     shutil.copytree(ROOT / "data", d)
     shutil.copy(ROOT / "tests/fixtures/source_school.csv", d / "source_school.csv")
+    # Tests use synthetic data only; start from an empty discipline file.
+    shutil.copy(ROOT / "tests/fixtures/uc_discipline.csv", d / "uc_discipline.csv")
     monkeypatch.setenv("PROFILE_STORE", str(tmp_path / "profiles.json"))
     import college_agent.datasets as ds, college_agent.profiles as pr
     monkeypatch.setattr(ds, "DATA_DIR", d)

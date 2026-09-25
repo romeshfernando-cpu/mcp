@@ -33,3 +33,15 @@ def test_pooled_none_without_counts(data_dir):
     (data_dir / "source_school.csv").write_text(
         HEADER + "Santa Barbara,2025,Example High School,X,,,,4.10,4.30,4.25\n")
     assert Datasets().source_school(110705, "Example High School")["pooled"] is None
+
+
+def test_uc_discipline_rates_and_blanks(data_dir):
+    (data_dir / "uc_discipline.csv").write_text(
+        "campus,fall_year,discipline,applicants,admits,admit_gpa_25,admit_gpa_75\n"
+        "Santa Barbara,2025,Engineering,1000,200,4.20,4.30\n"
+        "Santa Barbara,2025,Nursing,50,,,\n")
+    r = Datasets().major_data(110705, "Engineering")
+    assert r["status"] == "ok" and r["year"] == 2025
+    assert r["disciplines"]["Engineering"]["admit_rate"] == 0.2
+    nursing = r["disciplines"]["Nursing"]
+    assert nursing["admits"] is None and nursing["admit_rate"] is None  # blank means unknown, not 0%

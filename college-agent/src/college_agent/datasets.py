@@ -151,9 +151,11 @@ class Datasets:
             year = max(int(r["fall_year"]) for r in rows)
             disciplines = {
                 r["discipline"]: {
-                    "applicants": int(_num(r["applicants"]) or 0),
-                    "admits": int(_num(r["admits"]) or 0),
-                    "admit_rate": round((_num(r["admits"]) or 0) / (_num(r["applicants"]) or 1), 3),
+                    "applicants": _int(r["applicants"]),
+                    "admits": _int(r["admits"]),
+                    # Unknown, not zero, when either count is blank at the source.
+                    "admit_rate": (round(_int(r["admits"]) / _int(r["applicants"]), 3)
+                                   if _int(r["admits"]) is not None and _int(r["applicants"]) else None),
                     "admit_gpa_25": _num(r["admit_gpa_25"]),
                     "admit_gpa_75": _num(r["admit_gpa_75"]),
                 } for r in rows if int(r["fall_year"]) == year
