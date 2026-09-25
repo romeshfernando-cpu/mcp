@@ -10,7 +10,7 @@ never invents values; missing data is reported as missing.
 | `policies.json` | Test policy and whether major affects admission, per system | Verified 2026-09-24 |
 | `deadlines.json` | Fall 2027 deadlines (UC, Cal Poly SLO) | Verified 2026-09-24 |
 | `major_admission.json` | Cal Poly 2025 admits by college | Verified 2026-09-24 |
-| `source_school.csv` | UC applicants/admits/GPA by high school | Santa Margarita Catholic HS, fall 1994-2025: counts and mean GPAs (exports 2026-09-25) |
+| `source_school.csv` | UC applicants/admits/GPA by high school | Santa Margarita Catholic HS and Capistrano Valley HS, fall 1994-2025: counts and mean GPAs (exports 2026-09-25) |
 | `uc_discipline.csv` | UC admits by broad discipline | **Empty template: fill before demo** |
 
 ## Filling `source_school.csv` (the key demo data)
@@ -24,7 +24,8 @@ never invents values; missing data is reported as missing.
    - Leave a cell empty if the source suppresses it. Never fill in estimates.
 4. Or let the converter do step 3 for you (it handles the UTF-16, tab-separated
    export format and joins the GPA and count views):
-   `python scripts/convert_uc_export.py --gpa <gpa export> --counts <count export>`
+   `python scripts/convert_uc_export.py --gpa <gpa export> --counts <count export>` (repeat
+   both flags once per school; the output is rebuilt from every file you pass)
 
 ## Filling `uc_discipline.csv`
 

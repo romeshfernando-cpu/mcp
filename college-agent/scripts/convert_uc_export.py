@@ -7,8 +7,14 @@ both, joins them on (high school, fall year, campus), and writes the columns
 datasets.py expects. Values the source leaves blank stay blank; nothing is
 estimated.
 
+Pass one --gpa and one --counts per high school (repeat the flags for more
+schools). The output is rebuilt from the files given, so include every school
+you want in data/source_school.csv.
+
 Usage:
-    python scripts/convert_uc_export.py --gpa FR_GPA_by_Inst.csv [--counts HS_by_Year.csv]
+    python scripts/convert_uc_export.py \
+        --gpa smchs_gpa.csv --counts smchs_counts.csv \
+        --gpa cvhs_gpa.csv  --counts cvhs_counts.csv
 """
 from __future__ import annotations
 
@@ -53,8 +59,8 @@ def key(r: dict) -> tuple[str, str, str]:
 
 def main() -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--gpa", type=Path)
-    ap.add_argument("--counts", type=Path)
+    ap.add_argument("--gpa", type=Path, action="append", default=[])
+    ap.add_argument("--counts", type=Path, action="append", default=[])
     ap.add_argument("--out", type=Path, default=OUT)
     args = ap.parse_args()
     if not (args.gpa or args.counts):
@@ -69,14 +75,14 @@ def main() -> None:
                 "high_school": k[0], "fall_year": k[1], "campus": k[2], "city": r.get("City", "").strip()}
         return rows[k]
 
-    if args.gpa:
-        for r in read_export(args.gpa):
+    for path in args.gpa:
+        for r in read_export(path):
             out = base(r)
             for src, dst in GPA_COLS.items():
                 out[dst] = clean(r.get(src))
 
-    if args.counts:
-        data = read_export(args.counts)
+    for path in args.counts:
+        data = read_export(path)
         headers = data[0].keys() if data else []
         if "Count" in headers and "All" in headers:
             # Long format ("HS by Year" view): one row per measure, with
@@ -86,13 +92,13 @@ def main() -> None:
                 dst = long_map.get(r["Count"].strip())
                 if dst:
                     base(r)[dst] = clean(r.get("All")).removesuffix(".0")
-            data, headers = [], []
+            continue
 
         mapping = {}
-        for dst, options in (COUNT_COLS.items() if headers else []):
+        for dst, options in COUNT_COLS.items():
             match = next((h for h in headers if h.strip() in options), None)
             if not match:
-                raise SystemExit(f"Counts export has no column for {dst}; headers: {list(headers)}")
+                raise SystemExit(f"{path}: no column for {dst}; headers: {list(headers)}")
             mapping[dst] = match
         for r in data:
             out = base(r)
